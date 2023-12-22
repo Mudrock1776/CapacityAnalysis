@@ -3,3 +3,4 @@ node_modules/
 src/client/README.md
 build
 .next
+out

@@ -15,10 +15,10 @@ app.use(express.json());
 //Routes
 app.use(require("./routes/Capacity"));
 
-app.use(express.static(path.resolve(__dirname, "../client/build")))
+app.use(express.static(path.resolve(__dirname, "../client/out")))
 
 app.get('/*', (req, res) => {
-    res.sendFile(path.resolve(__dirname, "../client/build", "index.html"));
+    res.sendFile(path.resolve(__dirname, "../client/out", "index.html"));
 });
 
 app.listen(PORT, () => {
