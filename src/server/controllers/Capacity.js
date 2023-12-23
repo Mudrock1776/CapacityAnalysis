@@ -51,6 +51,7 @@ exports.fetchPart = async (req, res) => {
 
 //updates a part
 exports.updatePart = async (req, res) => {
+    console.log(req.body)
     try {
         if (await part.exists({name: req.body.name, _id: {$ne: req.body.id}})){
             res.status(403).send({error: "New Name taken"});
@@ -64,6 +65,7 @@ exports.updatePart = async (req, res) => {
             await this.listPart(req,res);
         }
     } catch (err) {
+        console.log(err);
         res.status(400).send({error: err});
     }
 }
