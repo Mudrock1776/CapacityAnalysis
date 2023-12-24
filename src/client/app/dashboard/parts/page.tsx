@@ -25,7 +25,7 @@ export default function Page(){
         }
         getParts();
         return;
-    });
+    }, [parts.length]);
 
     async function addPart() {
         var req = await fetch("http://localhost:8080/part/add", {
@@ -50,6 +50,7 @@ export default function Page(){
                 id: id
             })
         })
+        setParts(await err.json());
     }
     async function addColumn(){
         var newParts = parts;
@@ -64,18 +65,48 @@ export default function Page(){
                 body: JSON.stringify(part)
             });
         });
+        const res = await fetch("http://localhost:8080/part/list", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+        });
+        setParts(await res.json());
+        setMonthLenght(parts[0].months.length);
+    }
+    async function removeColumn(){
+        var newParts = parts;
+        newParts.forEach(async (part) => {
+            part.months.pop();
+            part.id = part._id;
+            await fetch("http://localhost:8080/part/update", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(part)
+            });
+        });
         setParts(newParts);
     }
+
     async function updateAmount(index:number, value:number, part:any){
+        if(Number.isNaN(value)){
+            value = 0;
+        }
+        if(value < 0){
+            value = 0;
+        }
         part.id = part._id;
         part.months[index] = value;
-        await fetch("http://localhost:8080/part/update", {
+        var res = await fetch("http://localhost:8080/part/update", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
             },
             body: JSON.stringify(part)
         });
+        setParts(await res.json());
     }
 
     function tableHead(){
@@ -99,7 +130,6 @@ export default function Page(){
         })
     }
     function list() {
-        
         return parts.map((part) => {
             if (part.name.match(search)){
                 var index = -1;
@@ -109,10 +139,11 @@ export default function Page(){
                             {part.name}
                         </th>
                         {part.months.map((month: any) => {
-                            index += 1;
+                            var cIndex = index + 1;
+                            index = index + 1;
                             return(
                                 <td className="px-6 py-4">
-                                    <input type="number" onChange={(e) => updateAmount(index, parseInt(e.target.value), part)} id="number-input" aria-describedby="helper-text-explanation" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder={month} required />
+                                    <input type="number" value={month} onChange={(e) => updateAmount(cIndex, parseInt(e.target.value), part)} id="number-input" aria-describedby="helper-text-explanation" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder={month} required />
                                 </td>
                             );
                         })}
