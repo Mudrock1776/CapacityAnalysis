@@ -12,7 +12,7 @@ exports.createPart = async (req, res) => {
             res.status(403).send({error: "Part name taken"})
         } else {
             await newPart.save();
-            res.status(200).send({error: "Created part"});
+            await this.listPart(req, res);
         }
     } catch(err){
         res.status(400).send({error: err});
