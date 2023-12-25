@@ -77,7 +77,7 @@ exports.createWorkstation = async (req, res) => {
             res.status(403).send({error: "Workstation name taken"})
         } else {
             await newWorkstation.save();
-            res.status(200).send({error: "Created workstation"});
+            await this.listWorkstation(req, res);
         }
     } catch(err){
         res.status(400).send({error: err});
@@ -127,8 +127,6 @@ exports.updateWorkstation = async (req, res) => {
                 LaborType: req.body.LaborType,
                 amount: req.body.amount,
                 hours: req.body.hours,
-                availability: req.body.availability,
-                capacity: req.body.capacity
             });
             await this.listWorkstation(req,res);
         }

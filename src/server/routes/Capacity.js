@@ -31,7 +31,7 @@ Routes.route("/part/update").post((req,res) => {
 
 //workstation routes
 //adds a new workstation
-Routes.route("/workstationt/add").post((req,res) =>{
+Routes.route("/workstation/add").post((req,res) =>{
     capacity.createWorkstation(req,res);
 });
 
