@@ -72,6 +72,7 @@ exports.updatePart = async (req, res) => {
 //creates a new workstation
 exports.createWorkstation = async (req, res) => {
     var newWorkstation = new workstation(req.body);
+    newWorkstation.availability = newWorkstation.amount * newWorkstation.hours * 4
     try {
         if (await workstation.exists({name:req.body.name})){
             res.status(403).send({error: "Workstation name taken"})
@@ -127,6 +128,7 @@ exports.updateWorkstation = async (req, res) => {
                 LaborType: req.body.LaborType,
                 amount: req.body.amount,
                 hours: req.body.hours,
+                availability: req.body.amount * req.body.hours * 4
             });
             await this.listWorkstation(req,res);
         }
@@ -200,5 +202,42 @@ exports.updateProcess = async (req, res) => {
         }
     } catch (err) {
         res.status(400).send({error: err});
+    }
+}
+
+//Generates a Capacity Report
+exports.capacityReport = async (req, res) => {
+    try {
+        var partsLenght = await part.find({});
+        if (partsLenght.length == 0){
+            res.status(403).send({error:"No parts created"});
+            return;
+        } else {
+            partsLenght = partsLenght[0].months.length;
+            workstation.updateMany({},{
+                capacity: Array(partsLenght).fill(0)
+            })
+        }
+        var processes = await process.find({});
+        processes.forEach(async (cProcess) => {
+            var cPart = await part.find({name: cProcess.part});
+            var cWorkstation = await workstation.find({name: cProcess.workstation});
+            var index = 0;
+            cPart.months.forEach((month) => {
+                cWorkstation.capacity[index] = cWorkstation.capacity[index] + (month * cProcess.MT)/(cProcess.RTY * cProcess.BS);
+                index += 1;
+            });
+            await workstation.findByIdAndUpdate(cWorkstation._id, cWorkstation);
+        });
+        var workstations = await workstation.find({});
+        workstations.forEach(async (cWorkstation) => {
+            for (let index = 0; index < cWorkstation.capacity.length; index++) {
+                cWorkstation.capacity[index] = cWorkstation.capacity[index] / cWorkstation.availability;
+            }
+            await workstation.findByIdAndUpdate(cWorkstation._id, cWorkstation);
+        });
+        res.status(200).send(workstations);
+    } catch(err){
+        res.status(400).send({error:err});
     }
 }

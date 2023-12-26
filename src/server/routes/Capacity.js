@@ -164,4 +164,9 @@ Routes.route("/process/update").post((req,res) => {
     capacity.updateProcess(req,res);
 });
 
+//Generates a capacity report and adds it to the the workstations, returns a list of workstations, takes in a post request
+Routes.route("/capacity").post((req,res) => {
+    capacity.capacityReport(req,res);
+})
+
 module.exports = Routes;
