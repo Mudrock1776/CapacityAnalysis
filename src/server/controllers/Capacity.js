@@ -144,7 +144,7 @@ exports.createProcess = async (req, res) => {
             res.status(403).send({error: "Process name taken"})
         } else {
             await newProcess.save();
-            res.status(200).send({error: "Created process"});
+            await this.listProcess(req, res);
         }
     } catch(err){
         res.status(400).send({error: err});
