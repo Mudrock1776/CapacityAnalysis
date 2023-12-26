@@ -12,7 +12,7 @@ exports.createPart = async (req, res) => {
             res.status(403).send({error: "Part name taken"})
         } else {
             await newPart.save();
-            res.status(200).send({error: "Created part"});
+            await this.listPart(req, res);
         }
     } catch(err){
         res.status(400).send({error: err});
@@ -77,7 +77,7 @@ exports.createWorkstation = async (req, res) => {
             res.status(403).send({error: "Workstation name taken"})
         } else {
             await newWorkstation.save();
-            res.status(200).send({error: "Created workstation"});
+            await this.listWorkstation(req, res);
         }
     } catch(err){
         res.status(400).send({error: err});
@@ -127,8 +127,6 @@ exports.updateWorkstation = async (req, res) => {
                 LaborType: req.body.LaborType,
                 amount: req.body.amount,
                 hours: req.body.hours,
-                availability: req.body.availability,
-                capacity: req.body.capacity
             });
             await this.listWorkstation(req,res);
         }
@@ -146,7 +144,7 @@ exports.createProcess = async (req, res) => {
             res.status(403).send({error: "Process name taken"})
         } else {
             await newProcess.save();
-            res.status(200).send({error: "Created process"});
+            await this.listProcess(req, res);
         }
     } catch(err){
         res.status(400).send({error: err});
