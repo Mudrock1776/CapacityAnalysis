@@ -214,7 +214,7 @@ exports.capacityReport = async (req, res) => {
             return;
         } else {
             partsLenght = partsLenght[0].months.length;
-            workstation.updateMany({},{
+            await workstation.updateMany({},{
                 capacity: Array(partsLenght).fill(0)
             })
         }
@@ -222,6 +222,8 @@ exports.capacityReport = async (req, res) => {
         processes.forEach(async (cProcess) => {
             var cPart = await part.find({name: cProcess.part});
             var cWorkstation = await workstation.find({name: cProcess.workstation});
+            cWorkstation = cWorkstation[0]
+            cPart = cPart[0]
             var index = 0;
             cPart.months.forEach((month) => {
                 cWorkstation.capacity[index] = cWorkstation.capacity[index] + (month * cProcess.MT)/(cProcess.RTY * cProcess.BS);

@@ -54,7 +54,7 @@ export default function Page(){
             setError("")
             setNewWorkstation({
                 name: "",
-                LaborType: "",
+                LaborType: "Assembly",
                 amount: 0,
                 hours: 0,
             });
