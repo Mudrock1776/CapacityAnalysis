@@ -11,7 +11,7 @@ export default function Page(){
     const [selectedMonth, setSelectedMonth] = useState(0);
     const [selectedStation, setSelectedStation] = useState<any>({
         name: "",
-        capacity: "",
+        capacity: [],
     });
     const month = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
     const d = new Date();
@@ -49,11 +49,28 @@ export default function Page(){
             });
             setWorkstations(await res.json())
             setBigErr("");
-            setSelectedStation(workstations[0]);
+            setSelectedStation({
+                name: workstations[0].name,
+                capacity: workstations[0].capacity,
+            });
             setSelectedMonth(0)
         }
         getData();
     }, [parts.length, workstations.length]);
+    function selectWorkstation(name:string){
+        console.log(name);
+        workstations.forEach((workstation) => {
+            console.log(workstation.name)
+            if (workstation.name == name){
+                console.log(workstation.capacity)
+                setSelectedStation({
+                    name: workstation.name,
+                    capacity: workstation.capacity
+                });
+                return;
+            }
+        })
+    }
 
     function BIGERROR(){
         if (bigErr != ""){
@@ -82,10 +99,10 @@ export default function Page(){
             return(
                 <div>
                     <h1>Capacity by workstation</h1>
-                    <select onChange={(e) => {setSelectedStation(e.target.value)}} value={selectedStation.name}>
+                    <select onChange={(e) => selectWorkstation(e.target.value)} value={selectedStation.name}>
                         {workstations.map((workstation) => {
                             return(
-                                <option value={workstation}>{workstation.name}</option>
+                                <option value={workstation.name}>{workstation.name}</option>
                             );
                         })}
                     </select>                    

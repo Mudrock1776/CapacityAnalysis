@@ -225,21 +225,26 @@ exports.capacityReport = async (req, res) => {
             cWorkstation = cWorkstation[0]
             cPart = cPart[0]
             var index = 0;
+            let capacities = []
             cPart.months.forEach((month) => {
-                cWorkstation.capacity[index] = cWorkstation.capacity[index] + (month * cProcess.MT)/(cProcess.RTY * cProcess.BS);
+                capacities.push(cWorkstation.capacity[index] + (month * cProcess.MT)/(cProcess.RTY * cProcess.BS));
                 index += 1;
             });
-            await workstation.findByIdAndUpdate(cWorkstation._id, cWorkstation);
+            console.log(capacities)
+            await workstation.findOneAndUpdate({name: cWorkstation.name}, {capacity:capacities});
         });
         var workstations = await workstation.find({});
         workstations.forEach(async (cWorkstation) => {
+            console.log(cWorkstation.capacity)
+            let capacities = []
             for (let index = 0; index < cWorkstation.capacity.length; index++) {
-                cWorkstation.capacity[index] = cWorkstation.capacity[index] / cWorkstation.availability;
+                capacities.push(cWorkstation.capacity[index] / cWorkstation.availability);
             }
-            await workstation.findByIdAndUpdate(cWorkstation._id, cWorkstation);
+            await workstation.findOneAndUpdate({name: cWorkstation.name}, {capacity:capacities});
         });
-        res.status(200).send(workstations);
+        await this.listWorkstation(req,res);
     } catch(err){
+        console.log(err)
         res.status(400).send({error:err});
     }
 }
