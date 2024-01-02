@@ -219,32 +219,30 @@ exports.capacityReport = async (req, res) => {
             })
         }
         var processes = await process.find({});
-        processes.forEach(async (cProcess) => {
+        for (let index = 0; index < processes.length; index++) {
+            var cProcess = processes[index];
             var cPart = await part.find({name: cProcess.part});
             var cWorkstation = await workstation.find({name: cProcess.workstation});
             cWorkstation = cWorkstation[0]
             cPart = cPart[0]
-            var index = 0;
             let capacities = []
-            cPart.months.forEach((month) => {
-                capacities.push(cWorkstation.capacity[index] + (month * cProcess.MT)/(cProcess.RTY * cProcess.BS));
-                index += 1;
-            });
-            console.log(capacities)
+            for (let z = 0; z < cPart.months.length; z++) {
+                capacities.push(cWorkstation.capacity[z] + (cPart.months[z] * cProcess.MT)/(cProcess.RTY * cProcess.BS));
+            }
             await workstation.findOneAndUpdate({name: cWorkstation.name}, {capacity:capacities});
-        });
+        }
         var workstations = await workstation.find({});
-        workstations.forEach(async (cWorkstation) => {
-            console.log(cWorkstation.capacity)
+        for (let index = 0; index < workstations.length; index++){
+            var cWorkstation = workstations[index];
             let capacities = []
             for (let index = 0; index < cWorkstation.capacity.length; index++) {
                 capacities.push(cWorkstation.capacity[index] / cWorkstation.availability);
             }
             await workstation.findOneAndUpdate({name: cWorkstation.name}, {capacity:capacities});
-        });
-        await this.listWorkstation(req,res);
+        };
+        var workstations = await workstation.find({});
+        res.status(200).send(workstations);
     } catch(err){
-        console.log(err)
         res.status(400).send({error:err});
     }
 }
