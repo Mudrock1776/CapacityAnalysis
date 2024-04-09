@@ -7,7 +7,7 @@ const workstation = new Schema({
     amount: {type: Number, required: true},
     hours: {type: Number, required: true},
     availability: {type: Number},
-    capacity: {type: Number}
+    capacity: {type: [Number]}
 },{
     timestamps: true
 });

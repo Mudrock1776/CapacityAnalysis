@@ -72,6 +72,7 @@ exports.updatePart = async (req, res) => {
 //creates a new workstation
 exports.createWorkstation = async (req, res) => {
     var newWorkstation = new workstation(req.body);
+    newWorkstation.availability = newWorkstation.amount * newWorkstation.hours * 4
     try {
         if (await workstation.exists({name:req.body.name})){
             res.status(403).send({error: "Workstation name taken"})
@@ -127,6 +128,7 @@ exports.updateWorkstation = async (req, res) => {
                 LaborType: req.body.LaborType,
                 amount: req.body.amount,
                 hours: req.body.hours,
+                availability: req.body.amount * req.body.hours * 4
             });
             await this.listWorkstation(req,res);
         }
@@ -200,5 +202,47 @@ exports.updateProcess = async (req, res) => {
         }
     } catch (err) {
         res.status(400).send({error: err});
+    }
+}
+
+//Generates a Capacity Report
+exports.capacityReport = async (req, res) => {
+    try {
+        var partsLenght = await part.find({});
+        if (partsLenght.length == 0){
+            res.status(403).send({error:"No parts created"});
+            return;
+        } else {
+            partsLenght = partsLenght[0].months.length;
+            await workstation.updateMany({},{
+                capacity: Array(partsLenght).fill(0)
+            })
+        }
+        var processes = await process.find({});
+        for (let index = 0; index < processes.length; index++) {
+            var cProcess = processes[index];
+            var cPart = await part.find({name: cProcess.part});
+            var cWorkstation = await workstation.find({name: cProcess.workstation});
+            cWorkstation = cWorkstation[0]
+            cPart = cPart[0]
+            let capacities = []
+            for (let z = 0; z < cPart.months.length; z++) {
+                capacities.push(cWorkstation.capacity[z] + (cPart.months[z] * cProcess.MT)/(cProcess.RTY * cProcess.BS));
+            }
+            await workstation.findOneAndUpdate({name: cWorkstation.name}, {capacity:capacities});
+        }
+        var workstations = await workstation.find({});
+        for (let index = 0; index < workstations.length; index++){
+            var cWorkstation = workstations[index];
+            let capacities = []
+            for (let index = 0; index < cWorkstation.capacity.length; index++) {
+                capacities.push(cWorkstation.capacity[index] / cWorkstation.availability);
+            }
+            await workstation.findOneAndUpdate({name: cWorkstation.name}, {capacity:capacities});
+        };
+        var workstations = await workstation.find({});
+        res.status(200).send(workstations);
+    } catch(err){
+        res.status(400).send({error:err});
     }
 }
