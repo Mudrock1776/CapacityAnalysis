@@ -3,8 +3,12 @@ const path = require("path");
 const app = express();
 const cors = require("cors");
 
-require("dotenv").config({ path: "./config.env"});
-const PORT = process.env.PORT || 8080;
+if (process.env.PORT == null) {
+    process.env.PORT = 8080;
+}
+if (process.env.MONGOURL == null){
+    process.env.MONGOURL = 'mongodb://localhost:27017/Capacity';
+}
 
 const Db = require("./DBconn");
 
@@ -21,6 +25,7 @@ app.get('/*', (req, res) => {
     res.sendFile(path.resolve(__dirname, "../client/out", "index.html"));
 });
 
-app.listen(PORT, () => {
-    console.log(`Server is running on port: ${PORT}`);
+app.listen(process.env.PORT, () => {
+    console.log(`Server is running on port: ${process.env.PORT}`);
+    console.log(`Using Database: ${process.env.MONGOURL}`);
 })
