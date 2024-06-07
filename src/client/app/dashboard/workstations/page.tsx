@@ -15,7 +15,7 @@ export default function Page(){
 
     useEffect(() => {
         async function getWorkstations(){
-            const res = await fetch("http://localhost:8080/workstation/list",{
+            const res = await fetch("/workstation/list",{
                 method: "POST",
                 headers:{
                     "Content-Type": "application/json"
@@ -36,7 +36,7 @@ export default function Page(){
     async function addWorkstation(e:any){
         e.preventDefault();
         const newEntry = { ...newWorkstation};
-        const res = await fetch("http://localhost:8080/workstation/add", {
+        const res = await fetch("/workstation/add", {
             method: "POST",
             headers:{
                 "Content-Type": "application/json"
@@ -61,7 +61,7 @@ export default function Page(){
         }
     }
     async function deleteWorkstation(id:string) {
-        const res = await fetch("http://localhost:8080/workstation/delete", {
+        const res = await fetch("/workstation/delete", {
             method: "POST",
             headers:{
                 "Content-Type": "application/json"
@@ -91,7 +91,7 @@ export default function Page(){
                 workstation.hours = value;
                 break;
         }
-        const res = await fetch("http://localhost:8080/workstation/update", {
+        const res = await fetch("/workstation/update", {
             method: "POST",
             headers:{
                 "Content-Type": "application/json"

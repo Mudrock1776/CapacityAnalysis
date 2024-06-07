@@ -13,7 +13,7 @@ export default function Page(){
 
     useEffect(() => {
         async function getParts() {
-            const res = await fetch('http://localhost:8080/part/list', {
+            const res = await fetch('/part/list', {
                 method: "POST",
                 headers: {
                     "Content-Type" : "application/json",
@@ -37,7 +37,7 @@ export default function Page(){
         for (let index = 0; index < monthLenght; index++) {
             newMonths.push(0);
         }
-        var req = await fetch("http://localhost:8080/part/add", {
+        var req = await fetch("/part/add", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -61,7 +61,7 @@ export default function Page(){
     }
 
     async function deletePart(id:string) {
-        var err = await fetch("http://localhost:8080/part/delete", {
+        var err = await fetch("/part/delete", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -77,7 +77,7 @@ export default function Page(){
         newParts.forEach(async (part) => {
             part.months.push(0);
             part.id = part._id
-            await fetch("http://localhost:8080/part/update", {
+            await fetch("/part/update", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -93,7 +93,7 @@ export default function Page(){
         newParts.forEach(async (part) => {
             part.months.pop();
             part.id = part._id;
-            await fetch("http://localhost:8080/part/update", {
+            await fetch("/part/update", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -114,7 +114,7 @@ export default function Page(){
         }
         part.id = part._id;
         part.months[index] = value;
-        var res = await fetch("http://localhost:8080/part/update", {
+        var res = await fetch("/part/update", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",

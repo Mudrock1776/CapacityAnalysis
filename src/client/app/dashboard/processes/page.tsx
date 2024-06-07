@@ -27,21 +27,21 @@ export default function Page(){
 
     useEffect(() => {
         async function getEverything(){
-            const resPart = await fetch('http://localhost:8080/part/list', {
+            const resPart = await fetch('/part/list', {
                 method: "POST",
                 headers: {
                     "Content-Type" : "application/json",
                 }
             });
             setParts(await resPart.json());
-            const resWorkstation = await fetch("http://localhost:8080/workstation/list", {
+            const resWorkstation = await fetch("/workstation/list", {
                 method: "POST",
                 headers:{
                     "Content-Type": "application/json"
                 }
             });
             setWorkstations(await resWorkstation.json());
-            const resProcess = await fetch("http://localhost:8080/process/list", {
+            const resProcess = await fetch("/process/list", {
                 method: "POST",
                 headers:{
                     "Content-Type": "application/json"
@@ -69,7 +69,7 @@ export default function Page(){
     async function addProcess(e:any){
         e.preventDefault();
         const newEntry = {...newProcess};
-        const res = await fetch("http://localhost:8080/process/add", {
+        const res = await fetch("/process/add", {
             method: "POST",
             headers:{
                 "Content-Type": "application/json"
@@ -118,7 +118,7 @@ export default function Page(){
                 break;
         }
         process.id = process._id;
-        const res = await fetch("http://localhost:8080/process/update", {
+        const res = await fetch("/process/update", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -128,7 +128,7 @@ export default function Page(){
         setProcesses(await res.json());
     }
     async function deleteProcess(id:string) {
-        const res = await fetch("http://localhost:8080/process/delete", {
+        const res = await fetch("/process/delete", {
             method: "POST",
             headers:{
                 "Content-Type": "application/json"

@@ -22,7 +22,7 @@ export default function Page(){
     ChartJS.register(CategoryScale, LinearScale, BarElement,Title,Tooltip,Legend);
     useEffect(() => {
         async function getData(){
-            var res = await fetch("http://localhost:8080/part/list", {
+            var res = await fetch("/part/list", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
@@ -33,7 +33,7 @@ export default function Page(){
                 setBigErr("No parts defined");
                 return;
             }
-            var res = await fetch("http://localhost:8080/workstation/list", {
+            var res = await fetch("/workstation/list", {
                 method: "POST",
                 headers:{
                     "Content-Type": "application/json"
@@ -45,7 +45,7 @@ export default function Page(){
                 return;
             }
 
-            var res = await fetch("http://localhost:8080/capacity", {
+            var res = await fetch("/capacity", {
                 method: "POST",
                 headers:{
                     "Content-Type": "application/json"
